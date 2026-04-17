@@ -41,6 +41,47 @@ public class ProdutosDAO {
         
     }
     
+    public ProdutosDTO buscarPorId(int id) {
+        String sql = "SELECT * FROM produtos WHERE id = ?";
+
+        try {
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                ProdutosDTO p = new ProdutosDTO();
+                p.setId(rs.getInt("id"));
+                p.setNome(rs.getString("nome"));
+                p.setValor(rs.getInt("valor"));
+                p.setStatus(rs.getString("status"));
+                return p;
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+    
+    public boolean venderProduto(int idProduto) {
+        String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ? AND status = 'A Venda'";
+
+        try {
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, idProduto);
+
+            int linhas = st.executeUpdate();
+
+            return linhas > 0; 
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
     public ArrayList<ProdutosDTO> listarProdutos(){
         String sql = "SELECT * FROM produtos";
 
