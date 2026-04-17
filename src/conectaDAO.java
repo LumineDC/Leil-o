@@ -18,16 +18,34 @@ import javax.swing.JOptionPane;
 public class conectaDAO {
     
     public Connection connectDB(){
-        Connection conn = null;
-        
+        Connection con;
+   
         try {
-        
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/uc11?user=root&password=");
-            
-        } catch (SQLException erro){
-            JOptionPane.showMessageDialog(null, "Erro ConectaDAO" + erro.getMessage());
+
+            String url = "jdbc:mysql://localhost:3306/leilao";
+            String user = "root";
+            String password = "Lala.2510";
+
+            con = DriverManager.getConnection(url, user, password);
+            return con;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao conectar: " + e.getMessage());
+            return null;
         }
-        return conn;
+    }
+
+    public void desconectar(Connection con) {
+        try {
+            if (con != null && !con.isClosed()) {
+                con.close();
+                System.out.println("Você se desconectou do banco de dados");
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Não foi possível desconectar do banco de dados.");
+        }
     }
     
 }
