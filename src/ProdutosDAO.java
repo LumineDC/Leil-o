@@ -33,9 +33,9 @@ public class ProdutosDAO {
             stmt.setString(3, produto.getStatus());
             stmt.execute();
 
-            
+            JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         } catch (Exception e) {
-            
+            JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
         }
         
         
