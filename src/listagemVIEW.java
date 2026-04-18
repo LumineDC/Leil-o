@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -136,17 +137,62 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
+
         
-        ProdutosDAO produtosdao = new ProdutosDAO();
+        if (id_produto_venda.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite o ID do produto!");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(id_produto_venda.getText());
+
+            ProdutosDAO dao = new ProdutosDAO();
+            ProdutosDTO produto = dao.buscarPorId(id);
+
+            if (produto == null) {
+                JOptionPane.showMessageDialog(this, "Produto não encontrado.");
+                return;
+            }
+
+            if (produto.getStatus().equalsIgnoreCase("Vendido")) {
+                JOptionPane.showMessageDialog(this, "Esse produto já foi vendido!");
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Produto: " + produto.getNome()
+                    + "\nValor: " + produto.getValor()
+                    + "\n\nConfirmar venda?",
+                    "Venda",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+
+                boolean sucesso = dao.venderProduto(id);
+
+                if (sucesso) {
+                    JOptionPane.showMessageDialog(this, "Venda realizada com sucesso!");
+                    listarProdutos();
+                    id_produto_venda.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao vender produto.");
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Digite um ID válido!");
+        }
         
         //produtosdao.venderProduto(Integer.parseInt(id));
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+        vendasVIEW vendas = new vendasVIEW(); 
+        vendas.setVisible(true);
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
