@@ -13,6 +13,7 @@ import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProdutosDAO {
@@ -65,12 +66,12 @@ public class ProdutosDAO {
         return null;
     }
     
-    public boolean venderProduto(int idProduto) {
+    public boolean venderProduto(int id) {
         String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ? AND status = 'A Venda'";
 
         try {
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, idProduto);
+            st.setInt(1, id);
 
             int linhas = st.executeUpdate();
 
@@ -80,6 +81,32 @@ public class ProdutosDAO {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+    
+    public List<ProdutosDTO> listarProdutosVendidos() {
+        String sql = "SELECT * FROM produtos WHERE status = ?";
+        List<ProdutosDTO> list = new ArrayList<>();
+
+        try {
+            PreparedStatement st = this.conn.prepareStatement(sql);
+            st.setString(1, "Vendido");
+
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                ProdutosDTO p = new ProdutosDTO();
+                p.setId(rs.getInt("id"));
+                p.setNome(rs.getString("nome"));
+                p.setValor(rs.getInt("valor"));
+                p.setStatus(rs.getString("status"));
+
+                list.add(p);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro ao listar produtos vendidos: " + e.getMessage());
+        }
+
+        return list;
     }
     
     public ArrayList<ProdutosDTO> listarProdutos(){
